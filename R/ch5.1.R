@@ -160,7 +160,7 @@ data_divorce_multiple_dm <- list(
   b_sd = 0.5,
   sigma_rate = 1)
 
-# Multiple regression of divorce model with design matrix ---------------------
+# Multiple regression of divorce model using design matrix --------------------
 
 # Create a path to the Stan file
 code_divorce_multiple_dm <- here("stan", "ch5.1-regression-dm.stan")
