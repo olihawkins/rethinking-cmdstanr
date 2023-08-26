@@ -74,7 +74,7 @@ renv::restore()
 
 ### Bayesian R Packages
 
-- [rethinking](https://github.com/rmcelreath/rethinking/) R package
+- [rethinking](https://github.com/rmcelreath/rethinking/)
 - [cmdstanr](https://github.com/stan-dev/cmdstanr)
 - [rstan](https://github.com/stan-dev/rstan/wiki/RStan-Getting-Started)
 - [brms](https://paul-buerkner.github.io/brms/)
