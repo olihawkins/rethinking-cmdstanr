@@ -43,7 +43,7 @@ data_divorce_age <- list(
 # Divorce by age model --------------------------------------------------------
 
 # Create a path to the Stan file
-code_divorce_age <- here("stan", "ch5.1-single-regression.stan")
+code_divorce_age <- here("stan", "ch5.1-regression-one.stan")
 
 # Create the model
 model_divorce_age <- cmdstan_model(code_divorce_age)
@@ -79,7 +79,7 @@ data_divorce_marriage <- list(
 # Divorce by marriage rate model ----------------------------------------------
 
 # Create a path to the Stan file
-code_divorce_marriage <- here("stan", "ch5.1-single-regression.stan")
+code_divorce_marriage <- here("stan", "ch5.1-regression-one.stan")
 
 # Create the model
 model_divorce_marriage <- cmdstan_model(code_divorce_marriage)
