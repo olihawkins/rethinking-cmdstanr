@@ -1,23 +1,26 @@
 // Chapter 5.1: Regression using design matrix approach 
 data {
-  int<lower=1> n;     // number of observations
-  int<lower=1> K;     // number of regressors (including constant)
-  vector[n] divorce;  // outcome
-  matrix[n, K] X;     // regressors
+  int<lower=1> n;      // number of observations
+  int<lower=1> k;      // number of regressors (including constant)
+  vector[n] y;         // outcome
+  matrix[n, k] X;      // regressors
+  real a_mean;         // intercept mean
+  real<lower=0> a_sd;  // intercept sd
+  real b_mean;         // coefficient mean
+  real<lower=0> b_sd;  // coefficient sd
+  real sigma_rate;     // rate of prior for error
 }
 parameters {
   real<lower=0,upper=50> sigma;  // scale
-  vector[K] b;                   // coefficients (including constant)
-}
-transformed parameters {
-  vector[n] mu;  // location
-  mu = X * b;    // linear transformation
+  vector[k] b;                   // coefficients (including constant)
 }
 model {
-  divorce ~ normal(mu, sigma);  // likelihood
-  sigma ~ exponential(1);       // prior for scale
-  b[1] ~ normal(0, 0.2);        // prior for intercept
-  for (i in 2:K) {              // priors for coefficients
-    b[i] ~ normal(0, 0.5);
+  vector[n] mu;                  // location
+  mu = X * b;                    // linear model
+  y ~ normal(mu, sigma);         // likelihood
+  sigma ~ exponential(1);        // prior for scale
+  b[1] ~ normal(a_mean, a_sd);   // prior for intercept
+  for (i in 2:k) {               // priors for coefficients
+    b[i] ~ normal(b_mean, b_sd);
   }
 }
