@@ -99,3 +99,42 @@ posterior_divorce_marriage <- fit_divorce_marriage$draws(format = "df")
 
 # Get a summary from the posterior
 summary_divorce_marriage <- fit_divorce_marriage$summary()
+
+# Multiple regression of divorce data -----------------------------------------
+
+data_divorce_multiple <- list(
+  n = nrow(wd),
+  y = wd$divorce_rate_std,
+  x1 = wd$marriage_rate_std,
+  x2 = wd$median_age_marriage_std,
+  a_mean = 0,
+  a_sd = 0.2,
+  bx1_mean = 0,
+  bx1_sd = 0.5,
+  bx2_mean = 0,
+  bx2_sd = 0.5,
+  sigma_rate = 1)
+
+# Multiple regression of divorce model ----------------------------------------
+
+# Create a path to the Stan file
+code_divorce_multiple <- here("stan", "ch5.1-regression-two.stan")
+
+# Create the model
+model_divorce_multiple <- cmdstan_model(code_divorce_multiple)
+
+# Fit the model
+fit_divorce_multiple <- model_divorce_multiple$sample(
+  data = data_divorce_multiple,
+  seed = 2001,
+  chains = 4,
+  parallel_chains = 4,
+  iter_warmup = ITERATIONS,
+  iter_sampling = ITERATIONS,
+  refresh = 500)
+
+# Draw samples from the posterior
+posterior_divorce_multiple <- fit_divorce_multiple$draws(format = "df")
+
+# Get a summary from the posterior
+summary_divorce_multiple <- fit_divorce_multiple$summary()

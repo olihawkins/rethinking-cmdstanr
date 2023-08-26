@@ -1,7 +1,7 @@
 data {
   int<lower=1> n;       // number of observations
   vector[n] y;          // outcome (divorce)
-  vector[n] x;          // predictor (median_age_marriage or divorce)
+  vector[n] x;          // predictor
   real a_mean;          // intercept mean
   real<lower=0> a_sd;   // intercept sd
   real bx_mean;         // coefficient mean
