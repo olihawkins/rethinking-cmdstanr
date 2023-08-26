@@ -12,24 +12,17 @@ library(tidyr)
 
 # Constants -------------------------------------------------------------------
 
-ALPHA_MEAN <- 178
-ALPHA_SD <- 20
-BETA_MEAN <- 0
-BETA_SD <- 1
-SIGMA_LOWER <- 0
-SIGMA_UPPER <- 50
 ITERATIONS <- 2500
 
 # Load data -------------------------------------------------------------------
 
-df <- here("data", "howell-1.csv") |> 
-  read_delim(delim = ";") |> 
+hw <- read_csv(here("data", "howell-1.csv")) |> 
   filter(age >= 18)
 
 # Plot relationship between weight and height ---------------------------------
 
 plot_wh <- ggplot(
-  data = df,
+  data = hw,
   mapping = aes(
     x = weight,
     y = height)) +
@@ -57,8 +50,8 @@ initial_priors <- tibble(
     n = 1:n_lines,
     alpha = rnorm(n_lines, 178, 20),
     beta = rnorm(n_lines, 0, 10)) |> 
-  expand_grid(weight = range(df$weight)) |> 
-  mutate(height = alpha + beta * (weight - mean(df$weight)))
+  expand_grid(weight = range(hw$weight)) |> 
+  mutate(height = alpha + beta * (weight - mean(hw$weight)))
 
 plot_initial_priors <- plot_prior_predictive_distribution(initial_priors)
 
@@ -66,26 +59,26 @@ revised_priors <- tibble(
   n = 1:n_lines,
   alpha = rnorm(n_lines, 178, 20),
   beta = rlnorm(n_lines, 0, 1)) |> 
-  expand_grid(weight = range(df$weight)) |> 
-  mutate(height = alpha + beta * (weight - mean(df$weight)))
+  expand_grid(weight = range(hw$weight)) |> 
+  mutate(height = alpha + beta * (weight - mean(hw$weight)))
 
 plot_revised_priors <- plot_prior_predictive_distribution(revised_priors)
 
-# Height data -----------------------------------------------------------------
+# Height by weight data -------------------------------------------------------
 
-data_height <- list(
-  n = nrow(df),
-  height = df$height,
-  weight = df$weight,
-  weight_mean = mean(df$weight),
-  alpha_mean = ALPHA_MEAN,
-  alpha_sd = ALPHA_SD,
-  beta_mean = BETA_MEAN,
-  beta_sd = BETA_SD,
-  sigma_lower = SIGMA_LOWER,
-  sigma_upper = SIGMA_UPPER)
+data_height_weight <- list(
+  n = nrow(hw),
+  height = hw$height,
+  weight = hw$weight,
+  weight_mean = mean(hw$weight),
+  alpha_mean = 178,
+  alpha_sd = 20,
+  beta_mean = 0,
+  beta_sd = 1,
+  sigma_lower = 0,
+  sigma_upper = 50)
 
-# Height for weight model -----------------------------------------------------
+# Height by weight model ------------------------------------------------------
 
 # Create a path to the Stan file
 code_height_weight <- here("stan", "ch4.4-height-weight.stan")
@@ -95,7 +88,7 @@ model_height_weight <- cmdstan_model(code_height_weight)
 
 # Fit the model
 fit_height_weight <- model_height_weight$sample(
-  data = data_height,
+  data = data_height_weight,
   seed = 2001,
   chains = 4,
   parallel_chains = 4,
@@ -145,7 +138,7 @@ plot_posteriors
 # Plot posterior predictive ---------------------------------------------------
 
 weight_seq <- 25:70
-weight_mean <- mean(df$weight)
+weight_mean <- mean(hw$weight)
 post <- posterior_height_weight
 samples_per_posterior_row <- 10
 color = "#52038a"
@@ -185,10 +178,10 @@ plot_posterior_prediction <- ggplot(
     mapping = aes(y = post_mean),
     color = color) +
   geom_point(
-    data = df,
+    data = hw,
     mapping = aes(
-      x = df$weight,
-      y = df$height),
+      x = hw$weight,
+      y = hw$height),
     color = color,
     shape = 1) +
   labs(

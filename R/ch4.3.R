@@ -49,15 +49,14 @@ ggplot(
 
 # Load data -------------------------------------------------------------------
 
-df <- here("data", "howell-1.csv") |> 
-  read_delim(delim = ";") |> 
+hw <- read_csv(here("data", "howell-1.csv")) |> 
   filter(age >= 18)
 
 # Height data -----------------------------------------------------------------
   
 data_height <- list(
-  n = nrow(df),
-  height = df$height,
+  n = nrow(hw),
+  height = hw$height,
   mu_mean = MU_MEAN,
   mu_sd = MU_SD,
   sigma_lower = SIGMA_LOWER,

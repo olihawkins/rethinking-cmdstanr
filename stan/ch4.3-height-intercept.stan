@@ -1,4 +1,4 @@
-// Chapter 4: Height model with intercept only
+// Chapter 4.3: Height model with intercept only
 data {
   int<lower=1> n;
   vector[n] height;

@@ -1,4 +1,4 @@
-// Chapter 4: Height as a function of weight
+// Chapter 4.4: Height as a function of weight
 data {
   int<lower=1> n;
   vector[n] height;
@@ -24,3 +24,4 @@ model {
   beta ~ lognormal(beta_mean, beta_sd);
   sigma ~ uniform(sigma_lower, sigma_upper);
 }
+
