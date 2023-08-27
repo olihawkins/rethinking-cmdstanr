@@ -18,10 +18,10 @@ parameters {
 }
 model {
   vector[n] mu;
-  mu = alpha + beta * (weight - weight_mean);
-  height ~ normal(mu, sigma);
-  alpha ~ normal(alpha_mean, alpha_sd);
-  beta ~ lognormal(beta_mean, beta_sd);
-  sigma ~ uniform(sigma_lower, sigma_upper);
+  mu = alpha + beta * (weight - weight_mean); // linear model
+  alpha ~ normal(alpha_mean, alpha_sd);       // intercept prior
+  beta ~ lognormal(beta_mean, beta_sd);       // coefficient prior
+  sigma ~ uniform(sigma_lower, sigma_upper);  // error prior
+  height ~ normal(mu, sigma);                 // likelihood
 }
 

@@ -17,10 +17,10 @@ parameters {
 model {
   vector[n] mu;                  // location
   mu = X * b;                    // linear model
-  y ~ normal(mu, sigma);         // likelihood
   sigma ~ exponential(1);        // prior for error
   b[1] ~ normal(a_mean, a_sd);   // prior for intercept
   for (i in 2:k) {               // priors for coefficients
     b[i] ~ normal(b_mean, b_sd);
   }
+  y ~ normal(mu, sigma);         // likelihood
 }

@@ -20,9 +20,9 @@ parameters {
 model {
   vector[n] mu;
   mu = a + bx1 * x1 + bx2 * x2;     // linear model
-  y ~ normal(mu, sigma);            // likelihood: probability of data
   a ~ normal(a_mean, a_sd);         // prior for intercept
   bx1 ~ normal(bx1_mean, bx1_sd);   // prior for coefficient 1
   bx2 ~ normal(bx2_mean, bx2_sd);   // prior for coefficient 1
   sigma ~ exponential(sigma_rate);  // prior for error
+  y ~ normal(mu, sigma);            // likelihood
 }

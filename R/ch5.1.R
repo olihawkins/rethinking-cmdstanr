@@ -6,6 +6,7 @@ library(cmdstanr)
 library(dplyr)
 library(ggplot2)
 library(here)
+library(posterior)
 library(purrr)
 library(readr)
 library(tidyr)
@@ -183,3 +184,155 @@ posterior_divorce_multiple_dm <- fit_divorce_multiple_dm$draws(format = "df")
 
 # Get a summary from the posterior
 summary_divorce_multiple_dm <- fit_divorce_multiple_dm$summary()
+
+# Marriage rate by age data ---------------------------------------------------
+
+data_marriage_age <- list(
+  n = nrow(wd),
+  y = wd$marriage_rate_std,
+  x = wd$median_age_marriage_std,
+  a_mean = 0,
+  a_sd = 0.2,
+  bx_mean = 0,
+  bx_sd = 0.5,
+  sigma_rate = 1)
+
+# Marriage rate by age model --------------------------------------------------
+
+# Create a path to the Stan file
+# This version generates a distribution of mu for each observation
+code_marriage_age <- here("stan", "ch5.1-regression-one-gen.stan")
+
+# Create the model
+model_marriage_age <- cmdstan_model(code_marriage_age)
+
+# Fit the model
+fit_marriage_age <- model_marriage_age$sample(
+  data = data_marriage_age,
+  seed = 2001,
+  chains = 4,
+  parallel_chains = 4,
+  iter_warmup = ITERATIONS,
+  iter_sampling = ITERATIONS,
+  refresh = 500)
+
+# Draw samples from the posterior
+posterior_marriage_age <- fit_marriage_age$draws(format = "df")
+
+# Get a summary from the posterior
+summary_marriage_age <- fit_marriage_age$summary()
+
+# Plot marriage rate by age ---------------------------------------------------
+
+plot_marriage_age_data <- wd |> select(
+  state_abbr,
+  median_age_marriage_std,
+  marriage_rate_std)
+
+intercept <- summary_marriage_age |> 
+  filter(variable == "a") |> 
+  pluck("mean")
+
+slope <- summary_marriage_age |> 
+  filter(variable == "bx") |> 
+  pluck("mean")
+
+plot_marriage_age <- ggplot(
+  data = plot_marriage_age_data,
+  mapping = aes(
+    x = median_age_marriage_std,
+    y = marriage_rate_std,
+    label = state_abbr)) +
+  geom_point() +
+  geom_text(
+    nudge_y = 0.15,
+    check_overlap = TRUE) + 
+  geom_abline(
+    intercept = intercept,
+    slope = slope)
+
+# Divorce rate by marriage rate residuals data --------------------------------
+
+mar_rate_mu <- summary_marriage_age$mean[5:54]
+mar_rate_residual <- wd$marriage_rate_std - mar_rate_mu
+
+data_div_mar_rate_residuals <- list(
+  n = nrow(wd),
+  y = wd$divorce_rate_std,
+  x = mar_rate_residual,
+  a_mean = 0,
+  a_sd = 0.2,
+  bx_mean = 0,
+  bx_sd = 0.5,
+  sigma_rate = 1)
+
+# Divorce rate by marriage rate residuals model -------------------------------
+
+# Create a path to the Stan file
+code_div_mar_rate_residuals <- here("stan", "ch5.1-regression-one.stan")
+
+# Create the model
+model_div_mar_rate_residuals <- cmdstan_model(code_marriage_age)
+
+# Fit the model
+fit_div_mar_rate_residuals <- model_div_mar_rate_residuals$sample(
+  data = data_div_mar_rate_residuals,
+  seed = 2001,
+  chains = 4,
+  parallel_chains = 4,
+  iter_warmup = ITERATIONS,
+  iter_sampling = ITERATIONS,
+  refresh = 500)
+
+# Draw samples from the posterior
+posterior_div_mar_rate_residuals <- 
+  fit_div_mar_rate_residuals$draws(format = "df")
+
+# Get a summary from the posterior
+summary_div_mar_rate_residuals <- 
+  fit_div_mar_rate_residuals$summary()
+
+summary_div_mar_rate_residuals <- 
+  fit_div_mar_rate_residuals$summary(
+    variables = fit_div_mar_rate_residuals$variable,
+    default_summary_measures()[1:4],
+    quantiles = ~ quantile2(., probs = c(0.055, 0.945)))
+
+# Plot divorce rate by marriage rate residuals --------------------------------
+
+plot_div_mar_rate_residuals_data <- tibble(
+  state_abbr = wd$state_abbr,
+  mar_rate_residual = mar_rate_residual,
+  divorce_rate_std = wd$divorce_rate_std,
+  parameter_lower = summary_div_mar_rate_residuals$q5.5[5:54],
+  parameter_upper = summary_div_mar_rate_residuals$q94.5[5:54])
+
+intercept <- summary_div_mar_rate_residuals |> 
+  filter(variable == "a") |> 
+  pluck("mean")
+
+slope <- summary_div_mar_rate_residuals |> 
+  filter(variable == "bx") |> 
+  pluck("mean")
+
+plot_div_mar_rate_residuals <- ggplot(
+  data = plot_div_mar_rate_residuals_data,
+  mapping = aes(
+    x = mar_rate_residual,
+    y = divorce_rate_std,
+    label = state_abbr)) +
+  geom_ribbon(
+    mapping = aes(
+      ymin = parameter_lower, 
+      ymax = parameter_upper),
+    alpha = 0.4) +
+  geom_point() +
+  geom_text(
+    nudge_y = 0.15,
+    check_overlap = TRUE) + 
+  geom_abline(
+    intercept = intercept,
+    slope = slope) +
+  geom_vline(
+    xintercept = 0,
+    linetype = 2)

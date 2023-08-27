@@ -55,6 +55,20 @@ Restore the environment.
 renv::restore()
 ```
 
+## How this project is organised
+
+### Code files
+
+For each section in the book that explores a particular analysis, there is an R script in the `R` directory and Stan model definitions in the `stan` directory. The textbook uses a hierarchical numbering system for sections, and the code files are numbered with smallest encompassing section number that covers the relevant material. Models are given meaningful but short names that summarise their goal.
+
+### Stan model definitions
+
+There are more Stan model definitions in this project than appear in the book. For some examples in the book, the same model is defined in several different ways in Stan. This is so that I can explore different aspects of Stan. 
+
+In some cases I have defined the same model in two or more ways that are mathematically equivalent, but that offer different interfaces to the R code, or that fit more or less quickly given how MCMC works. 
+
+In other cases I am using Stan to generate additional output that I need in the analysis. In the first half of his book, McElreath uses his own implementation of quadratic approximation to fit Bayesian models and to sampleand simulate from the posterior distribution. Stan can do this sampling and simulation for you, so rather than trying to emulate McElreath's handling of posterior samples in R, it makes sense to use these feature of Stan. Where a model has been augmented to generate additional data for use in the analysis the model name has the suffix `gen`.
+
 ## Links
 
 ### Statistical Rethinking
@@ -70,7 +84,11 @@ renv::restore()
 - [How does CmdStanR work?](https://mc-stan.org/cmdstanr/articles/cmdstanr-internals.html)
 - [CmdStan User's Guide](https://mc-stan.org/docs/cmdstan-guide/index.html)
 - [Understanding basics of Bayesian statistics and modelling](https://discourse.mc-stan.org/t/understanding-basics-of-bayesian-statistics-and-modelling/17243)
+
+### Stan
+- [Correct order of statements in the model block](https://discourse.mc-stan.org/t/correct-ordering-of-lines-in-the-model-block/661/3)
 - [Divergent transitions - a primer](https://discourse.mc-stan.org/t/divergent-transitions-a-primer/17099)
+
 
 ### Bayesian R Packages
 

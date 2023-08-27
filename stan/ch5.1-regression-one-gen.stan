@@ -13,9 +13,11 @@ parameters {
   real bx;                       // coefficient
   real a;                        // intercept
 }
-model {
+transformed parameters {
   vector[n] mu;
-  mu = a + bx * x;                  // linear model
+  mu = a + bx * x;  // linear model
+}
+model {
   a ~ normal(a_mean, a_sd);         // prior for intercept
   bx ~ normal(bx_mean, bx_sd);      // prior for coefficient
   sigma ~ exponential(sigma_rate);  // prior for error

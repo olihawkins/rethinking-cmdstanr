@@ -12,7 +12,7 @@ parameters {
   real<lower=0,upper=50> sigma;
 }
 model {
-  height ~ normal(mu, sigma);
-  mu ~ normal(mu_mean, mu_sd);
-  sigma ~ uniform(sigma_lower, sigma_upper);
+  mu ~ normal(mu_mean, mu_sd);                // mu prior
+  sigma ~ uniform(sigma_lower, sigma_upper);  // sigma prior
+  height ~ normal(mu, sigma);                 // likelihood
 }
