@@ -63,11 +63,11 @@ For each section in the book that explores a particular analysis, there is an R 
 
 ### Stan model definitions
 
-There are more Stan model definitions in this project than appear in the book. For some examples in the book, the same model is defined in several different ways in Stan. This is so that I can explore different aspects of Stan. 
+There are more Stan model definitions in this project than there are models that appear in the book. For some examples in the book, the same model is defined in several different ways in Stan. This is so that I can explore different aspects of Stan. 
 
-In some cases I have defined the same model in two or more ways that are mathematically equivalent, but that offer different interfaces to the R code, or that fit more or less quickly given how MCMC works. 
+In some cases I have defined the same model in two or more ways that are equivalent, but that either offer different interfaces to the R code, or that may fit differently given how MCMC works. 
 
-In other cases I am using Stan to generate additional output that I need in the analysis. In the first half of his book, McElreath uses his own implementation of quadratic approximation to fit Bayesian models and to sampleand simulate from the posterior distribution. Stan can do this sampling and simulation for you, so rather than trying to emulate McElreath's handling of posterior samples in R, it makes sense to use these feature of Stan. Where a model has been augmented to generate additional data for use in the analysis the model name has the suffix `gen`.
+In other cases I am using Stan to generate additional output that I need in the analysis. In the first half of his book, McElreath uses his own implementation of quadratic approximation to fit Bayesian models and to sample and simulate from the posterior distribution. Stan can do this sampling and simulation for you, so rather than trying to emulate the book's handling of posterior samples in R, it sometimes makes more sense to use these feature of Stan. Where a model has been augmented to generate additional data for use in the analysis, the model name has a suffix that contains `gen`.
 
 ## Links
 
