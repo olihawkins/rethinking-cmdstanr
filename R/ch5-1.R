@@ -201,7 +201,8 @@ data_marriage_age <- list(
 
 # Create a path to the Stan file
 # This version generates a distribution of mu for each observation
-code_marriage_age <- here("stan", "ch5-1-regression-one-gen-mu.stan")
+code_marriage_age <- here(
+  "stan", "ch5-1-regression-one-gen-mu-observations.stan")
 
 # Create the model
 model_marriage_age <- cmdstan_model(code_marriage_age)
@@ -255,6 +256,7 @@ plot_marriage_age <- ggplot(
 
 mar_rate_mu <- summary_marriage_age$mean[5:54]
 mar_rate_residual <- wd$marriage_rate_std - mar_rate_mu
+intervals <- seq(-2, 2, length.out = 50)
 
 data_div_mar_rate_residuals <- list(
   n = nrow(wd),
@@ -264,15 +266,18 @@ data_div_mar_rate_residuals <- list(
   a_sd = 0.2,
   bx_mean = 0,
   bx_sd = 0.5,
-  sigma_rate = 1)
+  sigma_rate = 1,
+  n_intervals = length(intervals),
+  intervals = intervals)
 
 # Divorce rate by marriage rate residuals model -------------------------------
 
 # Create a path to the Stan file
-code_div_mar_rate_residuals <- here("stan", "ch5-1-regression-one.stan")
+code_div_mar_rate_residuals <- here(
+  "stan", "ch5-1-regression-one-gen-mu-intervals.stan")
 
 # Create the model
-model_div_mar_rate_residuals <- cmdstan_model(code_marriage_age)
+model_div_mar_rate_residuals <- cmdstan_model(code_div_mar_rate_residuals)
 
 # Fit the model
 fit_div_mar_rate_residuals <- model_div_mar_rate_residuals$sample(
@@ -303,7 +308,10 @@ summary_div_mar_rate_residuals <-
 plot_div_mar_rate_residuals_data <- tibble(
   state_abbr = wd$state_abbr,
   mar_rate_residual = mar_rate_residual,
-  divorce_rate_std = wd$divorce_rate_std,
+  divorce_rate_std = wd$divorce_rate_std)
+
+plot_div_mar_rate_residuals_area_data <- tibble(
+  intervals = intervals,
   parameter_lower = summary_div_mar_rate_residuals$q5.5[5:54],
   parameter_upper = summary_div_mar_rate_residuals$q94.5[5:54])
 
@@ -315,19 +323,28 @@ slope <- summary_div_mar_rate_residuals |>
   filter(variable == "bx") |> 
   pluck("mean")
 
-plot_div_mar_rate_residuals <- ggplot(
-  data = plot_div_mar_rate_residuals_data,
-  mapping = aes(
-    x = mar_rate_residual,
-    y = divorce_rate_std,
-    label = state_abbr)) +
+plot_div_mar_rate_residuals <- ggplot() +
   geom_ribbon(
+    data = plot_div_mar_rate_residuals_area_data,
     mapping = aes(
+      x = intervals,
       ymin = parameter_lower, 
       ymax = parameter_upper),
-    alpha = 0.4) +
-  geom_point() +
+    alpha = 0.3) +
+  geom_point(
+    data = plot_div_mar_rate_residuals_data,
+    mapping = aes(
+      x = mar_rate_residual,
+      y = divorce_rate_std),
+    shape = 1,
+    color = "blue",
+    size = 2) +
   geom_text(
+    data = plot_div_mar_rate_residuals_data,
+    mapping = aes(
+      x = mar_rate_residual,
+      y = divorce_rate_std,
+      label = state_abbr),
     nudge_y = 0.15,
     check_overlap = TRUE) + 
   geom_abline(
@@ -335,4 +352,11 @@ plot_div_mar_rate_residuals <- ggplot(
     slope = slope) +
   geom_vline(
     xintercept = 0,
-    linetype = 2)
+    linetype = 2) +
+  scale_x_continuous(
+    expand = c(0, 0),
+    limits = c(-2, 2),
+    breaks = seq(-2, 2, 0.5)) +
+  labs(
+    x = "Marriage rate residuals",
+    y = "Divorce rate (std)")

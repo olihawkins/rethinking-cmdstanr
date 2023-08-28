@@ -1,5 +1,5 @@
-// Chapter 5.1: Regression with one parameter, using the transformed paramters
-// block to generate mu for each observation from the linear model.
+// Chapter 5.1: Regression with one predictor, using the transformed paramters
+// block to generate mu for each observation using the linear model.
 data {
   int<lower=1> n;       // number of observations
   vector[n] y;          // outcome (divorce)
