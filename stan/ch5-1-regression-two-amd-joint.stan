@@ -1,10 +1,12 @@
-// Chapter 5.1: Regression with two predictors, used to simulate confactual 
-// plots. In other regression examples from this chapter, I made the variable
-// names generic to illustrate the applicability of the code to ifttin data.
+// Chapter 5.1: Joint regression of two models, used to simulate counterfactual 
+// plots. In other regression examples from this chapter I made the variable
+// names generic to illustrate the applicability of the code to other data.
 // In this case I have named the variables after the data they represent in the
 // marriage dataset, because the inferences being made in this case depend upon
 // a causal model that is consistent with that specific data, and may not make 
-// sense in other contexts.
+// sense in other contexts. For the same reasons I am not passing Stan the 
+// parameters of prior distributions as data from within R. This makes the
+// most importatnt code more readable too.
 data {
   int<lower=1> n;               // number of observations
   vector[n] divorce;            // outcome (divorce)
