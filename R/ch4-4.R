@@ -81,7 +81,7 @@ data_height_weight <- list(
 # Height by weight model ------------------------------------------------------
 
 # Create a path to the Stan file
-code_height_weight <- here("stan", "ch4.4-height-weight.stan")
+code_height_weight <- here("stan", "ch4-4-height-weight.stan")
 
 # Create the model
 model_height_weight <- cmdstan_model(code_height_weight)

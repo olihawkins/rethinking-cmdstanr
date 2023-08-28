@@ -1,4 +1,4 @@
-# Chapter 2
+# Chapter 2.4
 
 # Imports ---------------------------------------------------------------------
 
@@ -18,7 +18,7 @@ data_globe <- list(w = 6, n = 9)
 # Globe model: uniform prior --------------------------------------------------
 
 # Create a path to the Stan file
-code_globe_uniform_prior <- here("stan", "ch2-globe-uniform.stan")
+code_globe_uniform_prior <- here("stan", "ch2-4-globe-uniform.stan")
 
 # Create the model
 model_globe_uniform_prior <- cmdstan_model(code_globe_uniform_prior)
@@ -38,7 +38,7 @@ posterior_globe_uniform_prior <- fit_globe_uniform_prior$draws(format = "df")
 
 # Globe model: normal prior ---------------------------------------------------
 
-code_globe_normal_prior <- here("stan", "ch2-globe-normal.stan")
+code_globe_normal_prior <- here("stan", "ch2-4-globe-normal.stan")
 
 # Create the model
 model_globe_normal_prior <- cmdstan_model(code_globe_normal_prior)

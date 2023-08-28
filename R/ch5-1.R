@@ -44,7 +44,7 @@ data_divorce_age <- list(
 # Divorce by age model --------------------------------------------------------
 
 # Create a path to the Stan file
-code_divorce_age <- here("stan", "ch5.1-regression-one.stan")
+code_divorce_age <- here("stan", "ch5-1-regression-one.stan")
 
 # Create the model
 model_divorce_age <- cmdstan_model(code_divorce_age)
@@ -80,7 +80,7 @@ data_divorce_marriage <- list(
 # Divorce by marriage rate model ----------------------------------------------
 
 # Create a path to the Stan file
-code_divorce_marriage <- here("stan", "ch5.1-regression-one.stan")
+code_divorce_marriage <- here("stan", "ch5-1-regression-one.stan")
 
 # Create the model
 model_divorce_marriage <- cmdstan_model(code_divorce_marriage)
@@ -119,7 +119,7 @@ data_divorce_multiple <- list(
 # Multiple regression of divorce model ----------------------------------------
 
 # Create a path to the Stan file
-code_divorce_multiple <- here("stan", "ch5.1-regression-two.stan")
+code_divorce_multiple <- here("stan", "ch5-1-regression-two.stan")
 
 # Create the model
 model_divorce_multiple <- cmdstan_model(code_divorce_multiple)
@@ -164,7 +164,7 @@ data_divorce_multiple_dm <- list(
 # Multiple regression of divorce model using design matrix --------------------
 
 # Create a path to the Stan file
-code_divorce_multiple_dm <- here("stan", "ch5.1-regression-dm.stan")
+code_divorce_multiple_dm <- here("stan", "ch5-1-regression-dm.stan")
 
 # Create the model
 model_divorce_multiple_dm <- cmdstan_model(code_divorce_multiple_dm)
@@ -201,7 +201,7 @@ data_marriage_age <- list(
 
 # Create a path to the Stan file
 # This version generates a distribution of mu for each observation
-code_marriage_age <- here("stan", "ch5.1-regression-one-gen.stan")
+code_marriage_age <- here("stan", "ch5-1-regression-one-gen-mu.stan")
 
 # Create the model
 model_marriage_age <- cmdstan_model(code_marriage_age)
@@ -269,7 +269,7 @@ data_div_mar_rate_residuals <- list(
 # Divorce rate by marriage rate residuals model -------------------------------
 
 # Create a path to the Stan file
-code_div_mar_rate_residuals <- here("stan", "ch5.1-regression-one.stan")
+code_div_mar_rate_residuals <- here("stan", "ch5-1-regression-one.stan")
 
 # Create the model
 model_div_mar_rate_residuals <- cmdstan_model(code_marriage_age)

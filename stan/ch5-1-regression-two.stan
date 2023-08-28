@@ -1,3 +1,4 @@
+// Chapter 5.1: Regression with two predictors
 data {
   int<lower=1> n;        // number of observations
   vector[n] y;           // outcome (divorce)

@@ -1,4 +1,4 @@
-// Chapter 2: Globe model with uniform prior
+// Chapter 2.4: Globe model with normal prior
 data {
   int w;
   int n;
@@ -8,5 +8,5 @@ parameters {
 }
 model {
   w ~ binomial(n, p);
-  p ~ uniform(0, 1);
+  p ~ normal(0.5, 0.2);
 }

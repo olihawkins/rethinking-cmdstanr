@@ -65,7 +65,7 @@ data_height <- list(
 # Height intercept model ------------------------------------------------------
 
 # Create a path to the Stan file
-code_height_intercept <- here("stan", "ch4.3-height-intercept.stan")
+code_height_intercept <- here("stan", "ch4-3-height-intercept.stan")
 
 # Create the model
 model_height_intercept <- cmdstan_model(code_height_intercept)
