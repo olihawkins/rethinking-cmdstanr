@@ -106,8 +106,8 @@ summary_divorce_marriage <- fit_divorce_marriage$summary()
 data_divorce_multiple <- list(
   n = nrow(wd),
   y = wd$divorce_rate_std,
-  x1 = wd$marriage_rate_std,
-  x2 = wd$median_age_marriage_std,
+  x1 = wd$median_age_marriage_std,
+  x2 = wd$marriage_rate_std,
   a_mean = 0,
   a_sd = 0.2,
   bx1_mean = 0,
@@ -146,8 +146,8 @@ X <- wd |>
   mutate(intercept = 1) |>
   select(
     intercept, 
-    marriage_rate_std, 
-    median_age_marriage_std) |> 
+    median_age_marriage_std,
+    marriage_rate_std) |> 
   as.matrix()
 
 data_divorce_multiple_dm <- list(
@@ -360,3 +360,36 @@ plot_div_mar_rate_residuals <- ggplot() +
   labs(
     x = "Marriage rate residuals",
     y = "Divorce rate (std)")
+
+# Joint regression of divorce data --------------------------------------------
+
+data_divorce_joint <- list(
+  n = nrow(wd),
+  divorce = wd$divorce_rate_std,
+  age = wd$median_age_marriage_std,
+  marriage = wd$marriage_rate_std)
+
+# Joint regression of divorce -------------------------------------------------
+
+# Create a path to the Stan file
+code_divorce_joint <- here(
+  "stan", "ch5-1-regression-two-amd-joint.stan")
+
+# Create the model
+model_divorce_joint <- cmdstan_model(code_divorce_joint)
+
+# Fit the model
+fit_divorce_joint <- model_divorce_joint$sample(
+  data = data_divorce_joint,
+  seed = 2001,
+  chains = 4,
+  parallel_chains = 4,
+  iter_warmup = ITERATIONS,
+  iter_sampling = ITERATIONS,
+  refresh = 500)
+
+# Draw samples from the posterior
+posterior_divorce_joint <- fit_divorce_joint$draws(format = "df")
+
+# Get a summary from the posterior
+summary_divorce_joint <- fit_divorce_joint$summary()
