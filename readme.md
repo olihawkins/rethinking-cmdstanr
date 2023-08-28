@@ -88,7 +88,7 @@ In other cases I am using Stan to generate additional output that I need in the 
 ### Stan
 - [Correct order of statements in the model block](https://discourse.mc-stan.org/t/correct-ordering-of-lines-in-the-model-block/661/3)
 - [Divergent transitions - a primer](https://discourse.mc-stan.org/t/divergent-transitions-a-primer/17099)
-
+- [An easy way to simulate fake data from your Stan model](https://khakieconomics.github.io/2017/04/30/An-easy-way-to-simulate-fake-data-in-stan.html)
 
 ### Bayesian R Packages
 
