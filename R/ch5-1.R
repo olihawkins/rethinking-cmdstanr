@@ -44,7 +44,7 @@ data_divorce_age <- list(
 # Divorce by age model --------------------------------------------------------
 
 # Create a path to the Stan file
-code_divorce_age <- here("stan", "ch5-1-regression-one.stan")
+code_divorce_age <- here("stan", "ch5-1-single.stan")
 
 # Create the model
 model_divorce_age <- cmdstan_model(code_divorce_age)
@@ -80,7 +80,7 @@ data_divorce_marriage <- list(
 # Divorce by marriage rate model ----------------------------------------------
 
 # Create a path to the Stan file
-code_divorce_marriage <- here("stan", "ch5-1-regression-one.stan")
+code_divorce_marriage <- here("stan", "ch5-1-single.stan")
 
 # Create the model
 model_divorce_marriage <- cmdstan_model(code_divorce_marriage)
@@ -119,7 +119,7 @@ data_divorce_multiple <- list(
 # Multiple regression of divorce model ----------------------------------------
 
 # Create a path to the Stan file
-code_divorce_multiple <- here("stan", "ch5-1-regression-two.stan")
+code_divorce_multiple <- here("stan", "ch5-1-multiple.stan")
 
 # Create the model
 model_divorce_multiple <- cmdstan_model(code_divorce_multiple)
@@ -164,7 +164,7 @@ data_divorce_multiple_dm <- list(
 # Multiple regression of divorce model using design matrix --------------------
 
 # Create a path to the Stan file
-code_divorce_multiple_dm <- here("stan", "ch5-1-regression-dm.stan")
+code_divorce_multiple_dm <- here("stan", "ch5-1-multiple-dm.stan")
 
 # Create the model
 model_divorce_multiple_dm <- cmdstan_model(code_divorce_multiple_dm)
@@ -202,7 +202,7 @@ data_marriage_age <- list(
 # Create a path to the Stan file
 # This version generates a distribution of mu for each observation
 code_marriage_age <- here(
-  "stan", "ch5-1-regression-one-gen-mu-observations.stan")
+  "stan", "ch5-1-single-gen-mu-obs.stan")
 
 # Create the model
 model_marriage_age <- cmdstan_model(code_marriage_age)
@@ -274,7 +274,7 @@ data_div_mar_rate_residuals <- list(
 
 # Create a path to the Stan file
 code_div_mar_rate_residuals <- here(
-  "stan", "ch5-1-regression-one-gen-mu-sequence.stan")
+  "stan", "ch5-1-single-gen-mu-seq.stan")
 
 # Create the model
 model_div_mar_rate_residuals <- cmdstan_model(code_div_mar_rate_residuals)
@@ -363,17 +363,21 @@ plot_div_mar_rate_residuals <- ggplot() +
 
 # Joint regression of divorce data --------------------------------------------
 
+age_seq <- seq(-2, 2, length.out = 50)
+
 data_divorce_joint <- list(
   n = nrow(wd),
   divorce = wd$divorce_rate_std,
   age = wd$median_age_marriage_std,
-  marriage = wd$marriage_rate_std)
+  marriage = wd$marriage_rate_std,
+  age_seq_len = length(age_seq),
+  age_seq = age_seq)
 
 # Joint regression of divorce -------------------------------------------------
 
 # Create a path to the Stan file
 code_divorce_joint <- here(
-  "stan", "ch5-1-regression-two-amd-joint.stan")
+  "stan", "ch5-1-amd-gen-sim-seq.stan")
 
 # Create the model
 model_divorce_joint <- cmdstan_model(code_divorce_joint)
@@ -393,4 +397,60 @@ posterior_divorce_joint <- fit_divorce_joint$draws(format = "df")
 
 # Get a summary from the posterior
 summary_divorce_joint <- fit_divorce_joint$summary()
+
+summary_divorce_joint <- 
+  fit_divorce_joint$summary(
+    variables = fit_divorce_joint $variable,
+    default_summary_measures()[1:4],
+    quantiles = ~ quantile2(., probs = c(0.055, 0.945)))
+
+# Plot simulated counterfactual for joint model of divorce --------------------
+
+plot_divorce_counteractual_data <- tibble(
+  age = age_seq,
+  divorce_mean = summary_divorce_joint$mean[59:108],
+  divorce_lower = summary_divorce_joint$q5.5[59:108],
+  divorce_upper = summary_divorce_joint$q94.5[59:108])
+
+plot_divorce_counteractual <- ggplot(
+    data = plot_divorce_counteractual_data,
+    mapping = aes(
+      x = age,
+      y = divorce_mean,
+      ymin = divorce_lower, 
+      ymax = divorce_upper)) +
+  geom_ribbon(alpha = 0.3) +
+  geom_line() +
+  scale_x_continuous(
+    expand = c(0, 0),
+    limits = c(-2, 2),
+    breaks = seq(-2, 2, 0.5)) +
+  labs(
+    x = "Manipulated A",
+    y = "Counterfactual D")
+
+# Plot simulated counterfactual for effect of age on marriage -----------------
+
+plot_marriage_counteractual_data <- tibble(
+  age = age_seq,
+  marriage_mean = summary_divorce_joint$mean[9:58],
+  marriage_lower = summary_divorce_joint$q5.5[9:58],
+  marriage_upper = summary_divorce_joint$q94.5[9:58])
+
+plot_marriage_counteractual <- ggplot(
+  data = plot_marriage_counteractual_data,
+  mapping = aes(
+    x = age,
+    y = marriage_mean,
+    ymin = marriage_lower, 
+    ymax = marriage_upper)) +
+  geom_ribbon(alpha = 0.3) +
+  geom_line() +
+  scale_x_continuous(
+    expand = c(0, 0),
+    limits = c(-2, 2),
+    breaks = seq(-2, 2, 0.5)) +
+  labs(
+    x = "Manipulated A",
+    y = "Counterfactual M")
 
