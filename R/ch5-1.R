@@ -256,7 +256,7 @@ plot_marriage_age <- ggplot(
 
 mar_rate_mu <- summary_marriage_age$mean[5:54]
 mar_rate_residual <- wd$marriage_rate_std - mar_rate_mu
-intervals <- seq(-2, 2, length.out = 50)
+x_seq <- seq(-2, 2, length.out = 50)
 
 data_div_mar_rate_residuals <- list(
   n = nrow(wd),
@@ -267,14 +267,14 @@ data_div_mar_rate_residuals <- list(
   bx_mean = 0,
   bx_sd = 0.5,
   sigma_rate = 1,
-  n_intervals = length(intervals),
-  intervals = intervals)
+  x_seq_len = length(x_seq),
+  x_seq = x_seq)
 
 # Divorce rate by marriage rate residuals model -------------------------------
 
 # Create a path to the Stan file
 code_div_mar_rate_residuals <- here(
-  "stan", "ch5-1-regression-one-gen-mu-intervals.stan")
+  "stan", "ch5-1-regression-one-gen-mu-sequence.stan")
 
 # Create the model
 model_div_mar_rate_residuals <- cmdstan_model(code_div_mar_rate_residuals)
@@ -311,7 +311,7 @@ plot_div_mar_rate_residuals_data <- tibble(
   divorce_rate_std = wd$divorce_rate_std)
 
 plot_div_mar_rate_residuals_area_data <- tibble(
-  intervals = intervals,
+  x_seq = x_seq,
   parameter_lower = summary_div_mar_rate_residuals$q5.5[5:54],
   parameter_upper = summary_div_mar_rate_residuals$q94.5[5:54])
 
@@ -327,7 +327,7 @@ plot_div_mar_rate_residuals <- ggplot() +
   geom_ribbon(
     data = plot_div_mar_rate_residuals_area_data,
     mapping = aes(
-      x = intervals,
+      x = x_seq,
       ymin = parameter_lower, 
       ymax = parameter_upper),
     alpha = 0.3) +
@@ -393,3 +393,4 @@ posterior_divorce_joint <- fit_divorce_joint$draws(format = "df")
 
 # Get a summary from the posterior
 summary_divorce_joint <- fit_divorce_joint$summary()
+
