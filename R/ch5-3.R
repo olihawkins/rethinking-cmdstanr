@@ -30,7 +30,6 @@ mk <- read_csv(here("data", "milk.csv")) |>
   arrange(clade) |> 
   group_by(clade) |> mutate(clade_id = cur_group_id()) |> ungroup() |> 
   mutate(kcal_per_g_std = standardise(kcal_per_g))
-  
 
 # Height by sex data ----------------------------------------------------------
 
@@ -98,4 +97,3 @@ summary_kcal_clade <- fit_kcal_clade$summary()
 
 # Get a summary from the posterior for just the clade categories
 summary_kcal_clade_a <- fit_kcal_clade$summary("a")
-
