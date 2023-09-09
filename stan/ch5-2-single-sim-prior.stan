@@ -12,7 +12,6 @@ data {
   real<lower=0> bx_sd;                   // coefficient sd
   real sigma_rate;                       // rate of prior for error
   int<lower=0, upper=1> run_estimation;  // a switch to evaluate the likelihood
-  
 }
 parameters {
   real<lower=0,upper=50> sigma;  // error
