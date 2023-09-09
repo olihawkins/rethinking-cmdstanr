@@ -71,7 +71,7 @@ data_kcal_clade <- list(
   kcal = mk$kcal_per_g_std,
   clade = mk$clade_id)
 
-# Height by sex model ---------------------------------------------------------
+# Kcal by clade model ---------------------------------------------------------
 
 # Create a path to the Stan file
 code_kcal_clade <- here("stan", "ch5-3-kcal-clade.stan")
